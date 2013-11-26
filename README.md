@@ -1,4 +1,4 @@
 JeuDes
 ======
 
-Le jeu de dés,Tutoriel Java - Apprendre le java.
+Code source du jeu de dés,Tutoriel Java - Apprendre le java.
