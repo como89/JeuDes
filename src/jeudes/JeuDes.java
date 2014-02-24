@@ -20,6 +20,7 @@ public class JeuDes
      * @param args the command line arguments
      * @throws java.io.IOException
      */
+    private static final int POINT_MAX = 5000;
     public static void main(String[] args) throws IOException
     {
         int choix = 0;
@@ -50,23 +51,99 @@ public class JeuDes
     }
     private static void jouerPartie(String joueur1,String joueur2,int[]tabDes,boolean[]tabBoolean,Random random,int [] tabNombreDes) throws IOException
     {
-        int total = 0;
-        genererDes(tabDes,random);
-        reinitialiserTabNombreDes(tabNombreDes);
-        calculerNombreDes(tabNombreDes,tabDes);
-        total = calculerPoints(tabNombreDes);
-        afficherDes(tabDes,total);
-        String choix = lireChoixPartie();
-        //135
-        verifierChoix(tabBoolean,choix);
-        if(verifierRebrassage(tabBoolean))
+        int totalBrass = 0;
+        int totalBrass2 = 0;
+        boolean premierBrassage;
+        boolean rebrassage;
+        boolean tourJoueur = true;
+        boolean tourJoueur2 = false;
+        int totalJoueur = 0;
+        int totalJoueur2 = 0;
+        while(totalJoueur < POINT_MAX && totalJoueur2 < POINT_MAX)
         {
-        rebrasserDes(tabBoolean,tabDes,random);
-        reinitialiserTabNombreDes(tabNombreDes);
-        calculerNombreDes(tabNombreDes,tabDes);
-        total = calculerPoints(tabNombreDes);
-        afficherDes(tabDes,total);
+            if(tourJoueur){
+            afficherTourJoueur(joueur1);
+            }
+            else
+            {
+            afficherTourJoueur(joueur2);
+            }
+            genererDes(tabDes,random);
+            reinitialiserTabNombreDes(tabNombreDes);
+            calculerNombreDes(tabNombreDes,tabDes);
+            totalBrass = calculerPoints(tabNombreDes);
+            afficherDes(tabDes,totalBrass);
+            premierBrassage = true;
+            rebrassage = true;
+            while(rebrassage){
+                if(totalBrass <= totalBrass2 && !premierBrassage)
+                {
+                    System.out.println("");
+                    System.out.println("Les points obtenus n'améliorent pas"
+                            + " le score, vous perdez vos points pour ce tour.");
+                    System.out.println("");
+                    totalBrass = 0;
+                    rebrassage = false;
+                }
+                else {
+                    premierBrassage = false;
+                    totalBrass2 = totalBrass;
+                    String choix = lireChoixPartie();
+                    verifierChoix(tabBoolean,choix);
+                    rebrassage = verifierRebrassage(tabBoolean);
+                    if(rebrassage)
+                    {
+                    rebrasserDes(tabBoolean,tabDes,random);
+                    reinitialiserTabNombreDes(tabNombreDes);
+                    calculerNombreDes(tabNombreDes,tabDes);
+                    totalBrass = calculerPoints(tabNombreDes);
+                    afficherDes(tabDes,totalBrass);
+                    }
+                }
+            }
+            if(tourJoueur)
+            {
+                totalJoueur += totalBrass;
+                tourJoueur = false;
+                
+                tourJoueur2 = true;
+                totalBrass = 0;
+                totalBrass2 = 0;
+            }
+            else
+            {
+                totalJoueur2 += totalBrass;
+                tourJoueur2 = false;
+                
+                tourJoueur = true;
+                totalBrass = 0;
+                totalBrass2 = 0;
+                System.out.println("");
+                System.out.println("");
+                System.out.println("{--Cumulatifs--}");
+                System.out.println(joueur1 + ":" + totalJoueur);
+                System.out.println(joueur2 + ":" + totalJoueur2);
+                System.out.println("");
+                System.out.println("");
+            }
         }
+        System.out.println("{-----Résultat-----}");
+        if (totalJoueur > totalJoueur2)
+        {
+            System.out.println(joueur1 + " a gagné.");
+        }
+        else
+        {
+            System.out.println(joueur2 + " a gagné.");
+        }
+        System.out.println(joueur1 + ":" + totalJoueur);
+        System.out.println(joueur2 + ":" + totalJoueur2);
+        System.out.println("");
+
+    }
+    
+    private static void afficherTourJoueur(String nomJoueur){
+        System.out.println("Tour de : " + nomJoueur);
     }
     
     private static void reinitialiserTabNombreDes(int[] tabNombreDes)
